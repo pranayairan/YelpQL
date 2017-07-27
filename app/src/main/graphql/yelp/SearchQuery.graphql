@@ -1,0 +1,24 @@
+query SearchYelp($radius: Float!, $location: String!) {
+  search(radius: $radius, location: $location, limit: 20, offset: 20) {
+    total
+    business {
+      id
+      name
+      rating
+      review_count
+      photos
+      price
+      coordinates {
+        latitude
+        longitude
+      }
+      location {
+        address1
+        city
+      }
+      categories {
+        title
+      }
+    }
+  }
+}

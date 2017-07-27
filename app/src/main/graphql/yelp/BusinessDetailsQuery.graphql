@@ -1,0 +1,43 @@
+query BusinessDetailsQuery {
+  business(id: "sorrel-san-francisco-3") {
+    id
+    name
+    is_claimed
+    is_closed
+    url
+    phone
+    display_phone
+    review_count
+    rating
+    price
+    categories {
+      title
+    }
+    location {
+      formatted_address
+    }
+    coordinates {
+      latitude
+      longitude
+    }
+    photos
+    hours {
+      hours_type
+      is_open_now
+      open {
+        end
+        start
+        day
+      }
+    }
+    reviews {
+      text
+      rating
+      time_created
+      user {
+        name
+        image_url
+      }
+    }
+  }
+}
