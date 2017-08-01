@@ -38,6 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvCost"
             android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -49,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvRestaurantName"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
             android:textColor="@android:color/white"
             tools:text="TextView" />
 
@@ -59,9 +62,9 @@
             android:layout_below="@id/tvRestaurantName"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/tvFoodType"
+            android:text="."
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            tools:text="." />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvDistance"
@@ -69,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvRestaurantName"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/tvDot"
             android:textColor="@android:color/white"
             tools:text="0.2 miles" />

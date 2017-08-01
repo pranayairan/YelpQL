@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import binarybricks.com.yelpql.R;
 import binarybricks.com.yelpql.network.RetrofitClient;
+import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by pairan on 7/8/17.
@@ -15,20 +17,29 @@ import binarybricks.com.yelpql.network.RetrofitClient;
 
 public class AuthenticationTokenUtil {
 
-    public static String fetchAndUpdateAuthenticationToken(@NonNull Context context) {
+    private static final long TIME_OUT_Days = 15552000000L;
+
+    public static Single<String> fetchAndUpdateAuthenticationToken(@NonNull final Context context) {
         // fetch token from network.
 
         Long lastCheckedAuthTokenTime = PreferenceUtil.getLastCheckedAuthTokenTime(context);
         long currentTimeMillis = System.currentTimeMillis();
 
         // token expires in 180 days after fetching.
-        if (lastCheckedAuthTokenTime == 0 || lastCheckedAuthTokenTime - currentTimeMillis >= 15552000000L) {
+        if (lastCheckedAuthTokenTime == 0 || lastCheckedAuthTokenTime - currentTimeMillis >= TIME_OUT_Days) {
             RetrofitClient retrofitClient = new RetrofitClient();
-            retrofitClient.getAuthenticationTokenFromYelp(context, context.getString(R.string.client_id), context.getString(R.string.client_secret));
-        } else {
-            return PreferenceUtil.getAuthToken(context);
+            return retrofitClient.getAuthenticationTokenFromYelp(context.getString(R.string.client_id), context.getString(R.string.client_secret))
+                    .doOnSuccess(new Consumer<String>() {
+                        @Override
+                        public void accept(@io.reactivex.annotations.NonNull String s) throws Exception {
+                            if (s != null) {
+                                PreferenceUtil.setLastCheckedAuthTokenTime(context, System.currentTimeMillis());
+                                PreferenceUtil.setAuthToken(context, s);
+                            }
+                        }
+                    });
         }
 
-        return "";
+        return Single.just(PreferenceUtil.getAuthToken(context));
     }
 }

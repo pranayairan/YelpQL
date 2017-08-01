@@ -6,6 +6,13 @@
     android:orientation="vertical"
     tools:context="binarybricks.com.yelpql.search.SearchActivity">
 
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <EditText
         android:id="@+id/etSearch"
         android:layout_width="match_parent"
