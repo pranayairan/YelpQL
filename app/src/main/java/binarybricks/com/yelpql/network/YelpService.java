@@ -7,7 +7,7 @@ import io.reactivex.Single;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -18,12 +18,12 @@ import retrofit2.http.POST;
  * Network class that is responsible for fetching authentication token from yelp.
  */
 
-public class RetrofitClient {
+public class YelpService {
 
     private static final String OAUTH_GRANT = "client_credentials";
     private Retrofit retrofit;
 
-    interface YelpService {
+    interface YelpAuthenticationService {
         @FormUrlEncoded
         @POST("oauth2/token")
         Single<YelpAuthentication> getAutenticationTokenFromYelp(@Field("grant_type") String grantType,
@@ -36,12 +36,12 @@ public class RetrofitClient {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.yelp.com/")
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
 
-        return retrofit.create(YelpService.class).getAutenticationTokenFromYelp(OAUTH_GRANT, clientID, clientSecret)
+        return retrofit.create(YelpAuthenticationService.class).getAutenticationTokenFromYelp(OAUTH_GRANT, clientID, clientSecret)
                 .subscribeOn(Schedulers.io())
                 .map(new Function<YelpAuthentication, String>() {
                     @Override

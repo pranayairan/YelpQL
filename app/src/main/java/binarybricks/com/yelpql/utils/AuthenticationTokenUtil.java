@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import binarybricks.com.yelpql.R;
-import binarybricks.com.yelpql.network.RetrofitClient;
+import binarybricks.com.yelpql.network.YelpService;
 import io.reactivex.Single;
 import io.reactivex.functions.Consumer;
 
@@ -27,8 +27,8 @@ public class AuthenticationTokenUtil {
 
         // token expires in 180 days after fetching.
         if (lastCheckedAuthTokenTime == 0 || lastCheckedAuthTokenTime - currentTimeMillis >= TIME_OUT_Days) {
-            RetrofitClient retrofitClient = new RetrofitClient();
-            return retrofitClient.getAuthenticationTokenFromYelp(context.getString(R.string.client_id), context.getString(R.string.client_secret))
+            YelpService yelpService = new YelpService();
+            return yelpService.getAuthenticationTokenFromYelp(context.getString(R.string.client_id), context.getString(R.string.client_secret))
                     .doOnSuccess(new Consumer<String>() {
                         @Override
                         public void accept(@io.reactivex.annotations.NonNull String s) throws Exception {
@@ -36,6 +36,12 @@ public class AuthenticationTokenUtil {
                                 PreferenceUtil.setLastCheckedAuthTokenTime(context, System.currentTimeMillis());
                                 PreferenceUtil.setAuthToken(context, s);
                             }
+                        }
+                    })
+                    .doOnError(new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@io.reactivex.annotations.NonNull Throwable throwable) throws Exception {
+                            throw new Exception("Error :" + throwable.getMessage());
                         }
                     });
         }

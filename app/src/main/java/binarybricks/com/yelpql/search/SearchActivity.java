@@ -108,6 +108,12 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
                                             // if last location is null try to get latest location
                                             updateLocationInRealTime(searchTerm);
                                         }
+                                    })
+                                    .doOnError(new Consumer<Throwable>() {
+                                        @Override
+                                        public void accept(@NonNull Throwable throwable) throws Exception {
+                                            Toast.makeText(SearchActivity.this, "Error " + throwable.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
                                     }).subscribe();
                         } else {
                             Toast.makeText(SearchActivity.this, "Error, we need location permission to work", Toast.LENGTH_LONG).show();
