@@ -1,5 +1,5 @@
-query BusinessDetailsQuery {
-  business(id: "sorrel-san-francisco-3") {
+query BusinessDetails($businessID: String!){
+  business(id: $businessID) {
     id
     name
     is_claimed

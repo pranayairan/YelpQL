@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlRestaurantView"
     android:layout_width="match_parent"
     android:layout_height="200dp">
 
@@ -9,6 +10,7 @@
         android:id="@+id/ivRestaurant"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:contentDescription="@string/restaurant_image"
         android:scaleType="fitXY"
         tools:src="@mipmap/ic_launcher" />
 
@@ -62,7 +64,7 @@
             android:layout_below="@id/tvRestaurantName"
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@+id/tvFoodType"
-            android:text="."
+            android:text="@string/seperator"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -86,7 +88,8 @@
             android:layout_alignTop="@id/tvDistance"
             android:layout_below="@id/tvRestaurantName"
             android:layout_marginEnd="8dp"
-            tools:srcCompat="@android:drawable/btn_star" />
+            android:contentDescription="@string/restaurant_rating"
+            tools:src="@drawable/stars_regular_5" />
 
 
     </RelativeLayout>

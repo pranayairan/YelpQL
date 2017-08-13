@@ -17,6 +17,8 @@ import binarybricks.com.yelpql.network.model.Business;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static binarybricks.com.yelpql.utils.YelpDataUtil.showRatingLogo;
+
 /**
  * Created by pairan on 7/25/17.
  */
@@ -25,10 +27,12 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
 
     private List<Business> businessList;
     private Context context;
+    private OnListItemClicked onListItemClicked;
 
-    public SearchAdapter(List<Business> businessList, Context context) {
+    public SearchAdapter(List<Business> businessList, Context context, OnListItemClicked onListItemClicked) {
         this.businessList = businessList;
         this.context = context;
+        this.onListItemClicked = onListItemClicked;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
 
     @Override
     public void onBindViewHolder(SearchRowVh holder, int position) {
-        Business business = businessList.get(position);
+        final Business business = businessList.get(position);
 
         Picasso.with(context).load(business.getPhotos().get(0)).into(holder.ivRestaurant);
         holder.tvFoodType.setText(business.getCategories().get(0));
@@ -49,42 +53,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
         holder.tvDistance.setText(business.getDistanceFromCurrent());
         showRatingLogo(holder.ivRating, business.getRating());
 
-    }
+        holder.rlRestaurantView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onListItemClicked.showBusinessDetails(business);
+            }
+        });
 
-    private void showRatingLogo(ImageView ratings, String rating) {
-        switch (rating) {
-
-            case "0":
-                ratings.setImageResource(R.drawable.stars_regular_0);
-                break;
-            case "1.0":
-                ratings.setImageResource(R.drawable.stars_regular_1);
-                break;
-            case "1.5":
-                ratings.setImageResource(R.drawable.stars_regular_1_half);
-                break;
-            case "2.0":
-                ratings.setImageResource(R.drawable.stars_regular_2);
-                break;
-            case "2.5":
-                ratings.setImageResource(R.drawable.stars_regular_2_half);
-                break;
-            case "3.0":
-                ratings.setImageResource(R.drawable.stars_regular_3);
-                break;
-            case "3.5":
-                ratings.setImageResource(R.drawable.stars_regular_3_half);
-                break;
-            case "4.0":
-                ratings.setImageResource(R.drawable.stars_regular_4);
-                break;
-            case "4.5":
-                ratings.setImageResource(R.drawable.stars_regular_4_half);
-                break;
-            case "5.0":
-                ratings.setImageResource(R.drawable.stars_regular_5);
-                break;
-        }
     }
 
     @Override
@@ -94,6 +69,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
 
     class SearchRowVh extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.rlRestaurantView)
+        ViewGroup rlRestaurantView;
         @BindView(R.id.ivRestaurant)
         ImageView ivRestaurant;
         @BindView(R.id.ivRating)
@@ -115,5 +92,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
 
     public void addBusinessList(List<Business> businessList) {
         this.businessList.addAll(businessList);
+    }
+
+    interface OnListItemClicked {
+        void showBusinessDetails(Business business);
     }
 }

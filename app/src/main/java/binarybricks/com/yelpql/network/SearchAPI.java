@@ -22,9 +22,10 @@ import yelp.SearchYelp;
 
 public class SearchAPI {
 
-    public static Single<List<Business>> searchYelp(@NonNull String authenticationToken, final double latitude, final double longitude, int offset) {
+    public static Single<List<Business>> searchYelp(@NonNull String authenticationToken, @NonNull String searchTerm, final double latitude, final double longitude, int offset) {
 
         final SearchYelp searchYelp = SearchYelp.builder()
+                .term(searchTerm)
                 .latitude(latitude)
                 .longitude(longitude)
                 .radius(10000d)

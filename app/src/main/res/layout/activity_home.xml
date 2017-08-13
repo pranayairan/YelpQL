@@ -18,7 +18,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:hint="Restaurant, Coffee, Pizza" />
+        android:hint="@string/restaurant_coffee_pizza"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
+        android:maxLines="1" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvNearbyRestaurant"

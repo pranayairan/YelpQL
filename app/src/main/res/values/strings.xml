@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">YelpQL</string>
+    <string name="reviews">Reviews</string>
+    <string name="website">Website</string>
+    <string name="direction">Direction</string>
+    <string name="phone_no">Phone No</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
+
+    <string name="stringAgo">ago</string>
+    <string name="stringNow">now</string>
+    <string name="stringSecondsUnit">s</string>
+    <string name="stringMinutesUnit">mn</string>
+    <string name="stringHoursUnit">h</string>
+    <string name="restaurant_coffee_pizza">Restaurant, Coffee, Pizza</string>
+    <string name="restaurant_image">Restaurant image</string>
+    <string name="restaurant_rating">Restaurant Rating</string>
+    <string name="user_image">User Image</string>
+    <string name="seperator">.</string>
+    <plurals name="stringDaysUnit">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
+    </plurals>
+    <plurals name="stringMonthsUnit">
+        <item quantity="one">month</item>
+        <item quantity="other">months</item>
+    </plurals>
+    <plurals name="stringYearsUnit">
+        <item quantity="one">year</item>
+        <item quantity="other">years</item>
+    </plurals>
 </resources>

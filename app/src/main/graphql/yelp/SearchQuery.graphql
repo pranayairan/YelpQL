@@ -1,5 +1,5 @@
-query SearchYelp($radius: Float!, $latitude: Float!,$longitude: Float!,$offset:Int!) {
-  search(radius: $radius, latitude: $latitude,longitude: $longitude, limit: 20, offset: $offset) {
+query SearchYelp($radius: Float!, $latitude: Float!,$longitude: Float!,$offset:Int!,$term:String!) {
+  search(term: $term,radius: $radius, latitude: $latitude,longitude: $longitude, limit: 20, offset: $offset) {
      total
         business {
           id
