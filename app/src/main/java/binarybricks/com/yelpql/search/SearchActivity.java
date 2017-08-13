@@ -127,6 +127,7 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
             public void accept(@NonNull Location location) throws Exception {
                 lastKnownLocation = location;
                 loadData(searchTerm, location, offset);
+                subscribe.dispose();
             }
         });
 
@@ -170,7 +171,7 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
     @Override
     protected void onStop() {
         super.onStop();
-        if (subscribe != null) {
+        if (subscribe != null && !subscribe.isDisposed()) {
             subscribe.dispose();
         }
     }
