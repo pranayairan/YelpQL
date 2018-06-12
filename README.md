@@ -2,6 +2,11 @@
 An android app that consumes Yelp GraphQL api with apollo android client. Read my blog post about how we can use apollo to consume yelps api and make an app 
 https://medium.com/@pranayairan/yelpql-learn-graphql-by-building-yelp-app-da2a71f16c77
 
+This is the current stack
+ - Apollo codegen, apollo run time and all plugins updated to 0.5.0
+ - Yelp schema is updated to latest till Jume 12 2018
+ - Java 8 support added
+ 
 # Demo
 ![YelpQL Yelps android app using GraphQL](https://media.giphy.com/media/l41K5wS5RXQXRlfoI/giphy.gif)
 
