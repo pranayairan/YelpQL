@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import binarybricks.com.yelpql.R;
 import binarybricks.com.yelpql.network.YelpService;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -15,11 +15,12 @@ import io.reactivex.functions.Consumer;
  * If tokens are not expired, this returns the cached token.
  */
 
+@Deprecated
 public class AuthenticationTokenUtil {
 
     private static final long TIME_OUT_Days = 15552000000L;
 
-    public static Single<String> fetchAndUpdateAuthenticationToken(@NonNull final Context context) {
+    public static Observable<String> fetchAndUpdateAuthenticationToken(@NonNull final Context context) {
         // fetch token from network.
 
         Long lastCheckedAuthTokenTime = PreferenceUtil.getLastCheckedAuthTokenTime(context);
@@ -29,7 +30,7 @@ public class AuthenticationTokenUtil {
         if (lastCheckedAuthTokenTime == 0 || lastCheckedAuthTokenTime - currentTimeMillis >= TIME_OUT_Days) {
             YelpService yelpService = new YelpService();
             return yelpService.getAuthenticationTokenFromYelp(context.getString(R.string.client_id), context.getString(R.string.client_secret))
-                    .doOnSuccess(new Consumer<String>() {
+                    .doOnNext(new Consumer<String>() {
                         @Override
                         public void accept(@io.reactivex.annotations.NonNull String s) throws Exception {
                             if (s != null) {
@@ -46,6 +47,6 @@ public class AuthenticationTokenUtil {
                     });
         }
 
-        return Single.just(PreferenceUtil.getAuthToken(context));
+        return Observable.just(PreferenceUtil.getAuthToken(context));
     }
 }

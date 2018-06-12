@@ -3,7 +3,7 @@ package binarybricks.com.yelpql.network;
 import android.support.annotation.NonNull;
 
 import binarybricks.com.yelpql.network.model.YelpAuthentication;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
@@ -26,13 +26,13 @@ public class YelpService {
     interface YelpAuthenticationService {
         @FormUrlEncoded
         @POST("oauth2/token")
-        Single<YelpAuthentication> getAutenticationTokenFromYelp(@Field("grant_type") String grantType,
-                                                                 @Field("client_id") String clientID,
-                                                                 @Field("client_secret") String clientSecret);
+        Observable<YelpAuthentication> getAutenticationTokenFromYelp(@Field("grant_type") String grantType,
+                                                                     @Field("client_id") String clientID,
+                                                                     @Field("client_secret") String clientSecret);
     }
 
 
-    public Single<String> getAuthenticationTokenFromYelp(@NonNull String clientID, @NonNull String clientSecret) {
+    public Observable<String> getAuthenticationTokenFromYelp(@NonNull String clientID, @NonNull String clientSecret) {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl("https://api.yelp.com/")

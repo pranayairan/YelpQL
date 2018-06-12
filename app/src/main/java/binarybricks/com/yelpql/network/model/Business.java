@@ -15,7 +15,7 @@ public class Business {
     private String url;
     private String phone;
     private String displayPhone;
-    private Integer reviewCount;
+    private Long reviewCount;
     private String rating;
     private String price;
     private List<String> categories;
@@ -68,11 +68,11 @@ public class Business {
         this.displayPhone = displayPhone;
     }
 
-    public Integer getReviewCount() {
+    public Long getReviewCount() {
         return reviewCount;
     }
 
-    public void setReviewCount(Integer reviewCount) {
+    public void setReviewCount(Long reviewCount) {
         this.reviewCount = reviewCount;
     }
 

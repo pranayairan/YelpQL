@@ -10,7 +10,7 @@ import java.util.List;
 
 import binarybricks.com.yelpql.network.model.Business;
 import binarybricks.com.yelpql.utils.LocationUtils;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -22,7 +22,7 @@ import yelp.BusinessDetails;
 
 public class BusinessDetailsAPI {
 
-    public static Single<Business> getBusinessDetails(@NonNull String authenticationToken, String businessId, final double latitude, final double longitude) {
+    public static Observable<Business> getBusinessDetails(@NonNull String authenticationToken, String businessId, final double latitude, final double longitude) {
 
         BusinessDetails businessDetails = BusinessDetails.builder()
                 .businessID(businessId)

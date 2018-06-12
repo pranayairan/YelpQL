@@ -46,7 +46,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchRowV
     public void onBindViewHolder(SearchRowVh holder, int position) {
         final Business business = businessList.get(position);
 
-        Picasso.with(context).load(business.getPhotos().get(0)).into(holder.ivRestaurant);
+        Picasso.get().load(business.getPhotos().get(0)).into(holder.ivRestaurant);
         holder.tvFoodType.setText(business.getCategories().get(0));
         holder.tvRestaurantName.setText(business.getName());
         holder.tvCost.setText(business.getPrice());

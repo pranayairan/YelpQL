@@ -36,15 +36,13 @@ import java.util.Locale;
 import binarybricks.com.yelpql.R;
 import binarybricks.com.yelpql.network.BusinessDetailsAPI;
 import binarybricks.com.yelpql.network.model.Business;
-import binarybricks.com.yelpql.utils.AuthenticationTokenUtil;
 import binarybricks.com.yelpql.utils.YelpDataUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import yelp.BusinessDetails;
 
 public class BusinessDetailsActivity extends AppCompatActivity {
@@ -85,6 +83,7 @@ public class BusinessDetailsActivity extends AppCompatActivity {
     private double latitude;
     private double longitude;
     private Business business;
+    private CompositeDisposable compositeDisposable;
 
     public static Intent getBusinessDetailsIntent(@NonNull Context context, @NonNull String restaurantID, double latitude, double longitude) {
         Intent intent = new Intent(context, BusinessDetailsActivity.class);
@@ -103,6 +102,8 @@ public class BusinessDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+
+        compositeDisposable = new CompositeDisposable();
         restaurantID = getIntent().getStringExtra(RESTAURANT_ID);
         latitude = getIntent().getDoubleExtra(LATITUDE, 0);
         longitude = getIntent().getDoubleExtra(LONGITUDE, 0);
@@ -116,13 +117,7 @@ public class BusinessDetailsActivity extends AppCompatActivity {
 
         progressbar.setVisibility(View.VISIBLE);
 
-        AuthenticationTokenUtil.fetchAndUpdateAuthenticationToken(this)
-                .flatMap(new Function<String, SingleSource<Business>>() {
-                    @Override
-                    public SingleSource<Business> apply(@io.reactivex.annotations.NonNull String authToken) throws Exception {
-                        return BusinessDetailsAPI.getBusinessDetails(authToken, businessID, latitude, longitude);
-                    }
-                })
+        compositeDisposable.add(BusinessDetailsAPI.getBusinessDetails(getString(R.string.apiKey), businessID, latitude, longitude)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Business>() {
                                @Override
@@ -137,7 +132,7 @@ public class BusinessDetailsActivity extends AppCompatActivity {
                                 progressbar.setVisibility(View.GONE);
                                 Toast.makeText(BusinessDetailsActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        });
+                        }));
     }
 
     private void bindData(Business business) {
@@ -145,7 +140,7 @@ public class BusinessDetailsActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(business.getName());
 
-        Picasso.with(this).load(business.getPhotos().get(0)).into(ivRestaurant);
+        Picasso.get().load(business.getPhotos().get(0)).into(ivRestaurant);
         tvRestaurantName.setText(business.getName());
         YelpDataUtil.showRatingLogo(ivRating, business.getRating());
         tvReviewsCount.setText(business.getReviewCount() + " Reviews");
@@ -194,7 +189,7 @@ public class BusinessDetailsActivity extends AppCompatActivity {
     private View getUserReviewSection(BusinessDetails.Review review, LayoutInflater layoutInflater, DateFormat dateFormat) {
         View reviewView = layoutInflater.inflate(R.layout.business_reviews, null);
 
-        Picasso.with(this).load(review.user().image_url()).into((ImageView) reviewView.findViewById(R.id.ivUserImage));
+        Picasso.get().load(review.user().image_url()).into((ImageView) reviewView.findViewById(R.id.ivUserImage));
         ((TextView) reviewView.findViewById(R.id.tvUserName)).setText(review.user().name());
         YelpDataUtil.showRatingLogo((ImageView) reviewView.findViewById(R.id.ivRating), String.valueOf(review.rating()));
         ((TextView) reviewView.findViewById(R.id.tvUserReview)).setText(review.text());
@@ -255,6 +250,12 @@ public class BusinessDetailsActivity extends AppCompatActivity {
     @OnClick(R.id.tvReviews)
     void openRestaurantReviews(View view) {
         svBusinessDetails.smoothScrollTo(0, reviewsLayout.getTop());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        compositeDisposable.dispose();
     }
 
     @Override

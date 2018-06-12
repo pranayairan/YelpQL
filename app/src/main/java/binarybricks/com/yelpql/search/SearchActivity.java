@@ -26,18 +26,16 @@ import binarybricks.com.yelpql.R;
 import binarybricks.com.yelpql.details.BusinessDetailsActivity;
 import binarybricks.com.yelpql.network.SearchAPI;
 import binarybricks.com.yelpql.network.model.Business;
-import binarybricks.com.yelpql.utils.AuthenticationTokenUtil;
 import binarybricks.com.yelpql.utils.EndlessRecyclerViewScrollListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 
 public class SearchActivity extends AppCompatActivity implements SearchAdapter.OnListItemClicked {
 
@@ -51,7 +49,8 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
 
     private RxPermissions rxPermissions;
     private RxLocation rxLocation;
-    private Disposable subscribe;
+    private CompositeDisposable compositeDisposable;
+    private Disposable locationSubscription;
 
     private int offset = 0;
 
@@ -65,6 +64,9 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
         setContentView(R.layout.activity_home);
 
         ButterKnife.bind(this);
+
+        compositeDisposable = new CompositeDisposable();
+
         rxPermissions = new RxPermissions(this);
         rxLocation = new RxLocation(this);
 
@@ -87,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
 
     // ask for permission before querying the location api
     private void getLastKnownLocation(final String searchTerm) {
-        rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION)
+        compositeDisposable.add(rxPermissions.request(Manifest.permission.ACCESS_FINE_LOCATION)
                 .subscribe(new Consumer<Boolean>() {
                     @SuppressWarnings("MissingPermission")
                     @Override
@@ -119,7 +121,7 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
                             Toast.makeText(SearchActivity.this, "Error, we need location permission to work", Toast.LENGTH_LONG).show();
                         }
                     }
-                });
+                }));
     }
 
     @SuppressWarnings("MissingPermission")
@@ -128,12 +130,12 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(5000);
 
-        subscribe = rxLocation.location().updates(locationRequest).subscribe(new Consumer<Location>() {
+        locationSubscription = rxLocation.location().updates(locationRequest).subscribe(new Consumer<Location>() {
             @Override
             public void accept(@NonNull Location location) throws Exception {
                 lastKnownLocation = location;
                 loadData(searchTerm, location, offset);
-                subscribe.dispose();
+                locationSubscription.dispose();
             }
         });
 
@@ -143,14 +145,8 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
 
         progressbar.setVisibility(View.VISIBLE);
 
-        // get the authentication token and find results
-        AuthenticationTokenUtil.fetchAndUpdateAuthenticationToken(this)
-                .flatMap(new Function<String, SingleSource<List<Business>>>() {
-                    @Override
-                    public SingleSource<List<Business>> apply(@NonNull String authenticationToken) throws Exception {
-                        return SearchAPI.searchYelp(authenticationToken, searchTerm, location.getLatitude(), location.getLongitude(), offsetValue);
-                    }
-                })
+        // search yelp
+        compositeDisposable.add(SearchAPI.searchYelp(getString(R.string.apiKey), searchTerm, location.getLatitude(), location.getLongitude(), offsetValue)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Business>>() {
                                @Override
@@ -171,15 +167,20 @@ public class SearchActivity extends AppCompatActivity implements SearchAdapter.O
                                 progressbar.setVisibility(View.GONE);
                                 Toast.makeText(SearchActivity.this, "Error " + throwable.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        });
+                        }));
+
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (subscribe != null && !subscribe.isDisposed()) {
-            subscribe.dispose();
+
+        if (locationSubscription != null && !locationSubscription.isDisposed()) {
+            locationSubscription.dispose();
         }
+
+        compositeDisposable.dispose();
     }
 
     @Override
